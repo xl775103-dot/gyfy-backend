@@ -97,9 +97,12 @@ async function parseDouyin(inputUrl) {
 
 function parseYtDlp(url, res) {
   execFile('python3', ['-m', 'yt_dlp',
-    '--dump-json', '--no-download', '--no-warnings', '--no-playlist', url
-  ], { timeout: 30000 }, (err, stdout) => {
-    if (err) return res.status(500).json({ error: '解析失败，请检查链接' });
+    '--dump-json', '--no-download', '--no-warnings', '--no-playlist',
+    '--extractor-args', 'youtube:player_client=android,web',
+    '--user-agent', 'Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36',
+    url
+  ], { timeout: 90000 }, (err, stdout, stderr) => {
+    if (err) { console.error('yt-dlp failed', url, (stderr || '').slice(0, 500)); return res.status(500).json({ error: '解析失败，请检查链接' }); }
 
     try {
       const info = JSON.parse(stdout);
