@@ -98,7 +98,7 @@ async function parseDouyin(inputUrl) {
 function parseYtDlp(url, res) {
   execFile('python3', ['-m', 'yt_dlp',
     '--dump-json', '--no-download', '--no-warnings', '--no-playlist',
-    '--extractor-args', 'youtube:player_client=android,web',
+    '--extractor-args', 'youtube:player_client=android,ios,web',
     '--user-agent', 'Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36',
     url
   ], { timeout: 90000 }, (err, stdout, stderr) => {
