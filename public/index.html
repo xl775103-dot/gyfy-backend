@@ -88,11 +88,14 @@ async function parseOne(url){
 var r=await fetch('/api/info',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url})});
 var d=await r.json();if(d.error)throw new Error(d.error);return d;
 }
+function fmtDur(s){if(!s&&s!==0)return '';s=Math.round(s);var m=Math.floor(s/60),ss=('0'+(s%60)).slice(-2);return m+':'+ss}
+function fmtSize(b){if(!b)return '';if(b<1048576)return Math.round(b/1024)+' KB';return (b/1048576).toFixed(1)+' MB'}
 function card(url,d){
 var useProxy=d.platform==='抖音',links='';
-(d.video_formats||[]).forEach(function(f,i){var href=useProxy?'/api/proxy?url='+encodeURIComponent(f.url)+'&filename='+encodeURIComponent(d.title):f.url;links+='<a class="btn-dl" target="_blank" rel="noopener" href="'+esc(href)+'">'+esc(f.label)+'</a>'});
+(d.video_formats||[]).forEach(function(f,i){var href=useProxy?'/api/proxy?url='+encodeURIComponent(f.url)+'&filename='+encodeURIComponent(d.title):f.url;var sz=fmtSize(f.filesize);links+='<a class="btn-dl" target="_blank" rel="noopener" href="'+esc(href)+'">'+esc(f.label)+(sz?' · '+sz:'')+'</a>'});
 (d.audio_formats||[]).forEach(function(f){var href=useProxy?'/api/proxy?url='+encodeURIComponent(f.url)+'&filename='+encodeURIComponent(d.title):f.url;links+='<a class="btn-dl alt" target="_blank" rel="noopener" href="'+esc(href)+'">音频 · '+esc(f.label)+'</a>'});
-return '<div class="result-card"><h3>'+esc(d.title)+'</h3><p class="meta">'+esc(d.platform)+' · '+esc(d.uploader||'')+'</p><div class="download-grid">'+(links||'暂无可用格式')+'</div></div>';
+var dur=fmtDur(d.duration),thumb=d.thumbnail?'<img src="'+esc(d.thumbnail)+'" alt="" style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin-bottom:12px" referrerpolicy="no-referrer">':'';
+return '<div class="result-card">'+thumb+'<h3>'+esc(d.title)+'</h3><p class="meta">'+esc(d.platform)+' · '+esc(d.uploader||'')+(dur?' · '+dur:'')+'</p><div class="download-grid">'+(links||'暂无可用格式')+'</div></div>';
 }
 async function doParse(){
 err.classList.remove('on');res.innerHTML='';
