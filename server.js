@@ -143,6 +143,8 @@ async function parseDouyin(inputUrl) {
 function runYtDlpOnce(url, client) {
   const args = ['-m', 'yt_dlp',
     '--dump-json', '--no-download', '--no-warnings', '--no-playlist',
+    '--force-ipv4',
+    '--js-runtimes', 'deno',
     '--user-agent', 'Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36',
   ];
   if (client) args.push('--extractor-args', 'youtube:player_client=' + client);
